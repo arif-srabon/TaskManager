@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:task_manager/ui/screens/login.dart';
 import 'package:task_manager/ui/screens/splash_screen.dart';
 
 void main(){
@@ -12,7 +13,7 @@ class TaskManagerApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: SplashScreen(),
+      home: LoginScreen(),
     );
   }
 }
