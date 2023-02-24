@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:task_manager/ui/screens/sign_up_screen.dart';
 import 'package:task_manager/ui/utils/text_styles.dart';
 import 'package:task_manager/ui/widgets/app_elevated_button.dart';
+import 'package:task_manager/ui/widgets/app_text_button_widget.dart';
 import 'package:task_manager/ui/widgets/screen_background_widget.dart';
 
 import '../widgets/app_text_field_widget.dart';
@@ -47,34 +49,28 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             AppElevatedButton(
               child: Icon(Icons.arrow_circle_right_outlined),
-              onTap: (){
-
-              },
+              onTap: () {},
             ),
             const SizedBox(
               height: 16,
             ),
             Center(
               child: TextButton(
-                  onPressed: (){},
+                  onPressed: () {},
                   child: const Text(
                     'Forgot Password?',
                     style: TextStyle(color: Colors.grey),
-                  )
-              ),
+                  )),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text("Don't have an account?"),
-                TextButton(
-                    onPressed: (){},
-                    child: const Text(
-                      'Sign Up',
-                      style: TextStyle(color: Colors.green),
-                    )
-                ),
-              ],
+            AppTextButton(
+              textTitle: "Don't have an account?",
+              textButton: "Sign Up",
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => SignUpScreen()));
+              },
             )
           ],
         ),
