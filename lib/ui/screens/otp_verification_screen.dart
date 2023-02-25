@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:task_manager/ui/screens/login.dart';
+import 'package:task_manager/ui/screens/reset_password_screen.dart';
 import 'package:task_manager/ui/utils/text_styles.dart';
 import 'package:task_manager/ui/widgets/app_elevated_button.dart';
 import 'package:task_manager/ui/widgets/app_text_button_widget.dart';
@@ -75,7 +76,9 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                 const SizedBox(
                   height: 16,
                 ),
-                AppElevatedButton(child: Text('Verify'), onTap: () {}),
+                AppElevatedButton(child: Text('Verify'), onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => ResetPasswordScreen()));
+                }),
                 const SizedBox(
                   height: 16,
                 ),
