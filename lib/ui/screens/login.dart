@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task_manager/ui/screens/main_bottom_nav_bar.dart';
 import 'package:task_manager/ui/screens/sign_up_screen.dart';
 import 'package:task_manager/ui/screens/verify_with_email_screen.dart';
 import 'package:task_manager/ui/utils/text_styles.dart';
@@ -50,7 +51,10 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             AppElevatedButton(
               child: Icon(Icons.arrow_circle_right_outlined),
-              onTap: () {},
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => MainBottomNavBarScreen()));
+              },
             ),
             const SizedBox(
               height: 16,
