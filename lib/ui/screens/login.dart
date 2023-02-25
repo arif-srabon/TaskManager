@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:task_manager/ui/screens/sign_up_screen.dart';
+import 'package:task_manager/ui/screens/verify_with_email_screen.dart';
 import 'package:task_manager/ui/utils/text_styles.dart';
 import 'package:task_manager/ui/widgets/app_elevated_button.dart';
 import 'package:task_manager/ui/widgets/app_text_button_widget.dart';
@@ -56,7 +57,12 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             Center(
               child: TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => VerifyWithEmailScreen()));
+                  },
                   child: const Text(
                     'Forgot Password?',
                     style: TextStyle(color: Colors.grey),
@@ -66,10 +72,8 @@ class _LoginScreenState extends State<LoginScreen> {
               textTitle: "Don't have an account?",
               textButton: "Sign Up",
               onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => SignUpScreen()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => SignUpScreen()));
               },
             )
           ],
@@ -78,4 +82,3 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
-
