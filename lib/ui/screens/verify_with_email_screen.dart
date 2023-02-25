@@ -1,5 +1,5 @@
-
 import 'package:flutter/material.dart';
+import 'package:task_manager/ui/screens/otp_verification_screen.dart';
 import 'package:task_manager/ui/utils/text_styles.dart';
 import 'package:task_manager/ui/widgets/app_elevated_button.dart';
 import 'package:task_manager/ui/widgets/app_text_button_widget.dart';
@@ -25,11 +25,17 @@ class _VerifyWithEmailScreenState extends State<VerifyWithEmailScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('Your Email Address', style: screenTitleTextStyle,),
+                Text(
+                  'Your Email Address',
+                  style: screenTitleTextStyle,
+                ),
                 const SizedBox(
                   height: 5,
                 ),
-                Text('A 6 digit verification pin will be sent to your email address.', style: screenSubTitleTextStyle,),
+                Text(
+                  'A 6 digit verification pin will be sent to your email address.',
+                  style: screenSubTitleTextStyle,
+                ),
                 const SizedBox(
                   height: 24,
                 ),
@@ -42,8 +48,12 @@ class _VerifyWithEmailScreenState extends State<VerifyWithEmailScreen> {
                 ),
                 AppElevatedButton(
                     child: Icon(Icons.arrow_circle_right_outlined),
-                    onTap: (){}
-                ),
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => OtpVerificationScreen()));
+                    }),
                 const SizedBox(
                   height: 16,
                 ),
