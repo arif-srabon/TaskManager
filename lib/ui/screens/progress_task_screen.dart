@@ -1,5 +1,6 @@
-
 import 'package:flutter/material.dart';
+import 'package:task_manager/ui/widgets/screen_background_widget.dart';
+import 'package:task_manager/ui/widgets/task_list_item.dart';
 
 class ProgressTaskScreen extends StatefulWidget {
   const ProgressTaskScreen({Key? key}) : super(key: key);
@@ -11,6 +12,19 @@ class ProgressTaskScreen extends StatefulWidget {
 class _ProgressTaskScreenState extends State<ProgressTaskScreen> {
   @override
   Widget build(BuildContext context) {
-    return Placeholder();
+    return ScreenBackgroud(
+        widget: ListView.builder(
+            itemCount: 10,
+            itemBuilder: (context, index) {
+              return TaskItemWidget(
+                titleOfTask: 'Something',
+                descriptionOfTask: 'Something',
+                dateOfTask: 'Something',
+                typeOfTask: 'In Progress',
+                onEditPress: () {},
+                onDeletePress: () {},
+                chipBackgroundColor: Colors.grey,
+              );
+            }));
   }
 }

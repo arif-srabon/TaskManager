@@ -9,6 +9,7 @@ class TaskItemWidget extends StatelessWidget {
     required this.typeOfTask,
     required this.onEditPress,
     required this.onDeletePress,
+    this.chipBackgroundColor,
   });
 
   final String titleOfTask;
@@ -16,6 +17,7 @@ class TaskItemWidget extends StatelessWidget {
   final String dateOfTask;
   final String typeOfTask;
   final VoidCallback onEditPress, onDeletePress;
+  final Color? chipBackgroundColor;
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +60,7 @@ class TaskItemWidget extends StatelessWidget {
                           typeOfTask,
                           style: TextStyle(color: Colors.white),
                         ),
-                        backgroundColor: Colors.blue,
+                        backgroundColor: chipBackgroundColor ?? Colors.blue,
                       ),
                       Spacer(),
                       IconButton(

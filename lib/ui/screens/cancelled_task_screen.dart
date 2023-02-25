@@ -1,5 +1,6 @@
-
 import 'package:flutter/material.dart';
+import 'package:task_manager/ui/widgets/screen_background_widget.dart';
+import 'package:task_manager/ui/widgets/task_list_item.dart';
 
 class CancelledTaskScreen extends StatefulWidget {
   const CancelledTaskScreen({Key? key}) : super(key: key);
@@ -11,6 +12,19 @@ class CancelledTaskScreen extends StatefulWidget {
 class _CancelledTaskScreenState extends State<CancelledTaskScreen> {
   @override
   Widget build(BuildContext context) {
-    return Placeholder();
+    return ScreenBackgroud(
+        widget: ListView.builder(
+            itemCount: 10,
+            itemBuilder: (context, index) {
+              return TaskItemWidget(
+                titleOfTask: 'Something',
+                descriptionOfTask: 'Something',
+                dateOfTask: 'Something',
+                typeOfTask: 'Cancelled',
+                onEditPress: () {},
+                onDeletePress: () {},
+                chipBackgroundColor: Colors.red,
+              );
+            }));
   }
 }
