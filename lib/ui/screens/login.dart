@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:task_manager/data/network_utils.dart';
+import 'package:task_manager/data/urls.dart';
 import 'package:task_manager/ui/screens/main_bottom_nav_bar.dart';
 import 'package:task_manager/ui/screens/sign_up_screen.dart';
 import 'package:task_manager/ui/screens/verify_with_email_screen.dart';
@@ -75,7 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 onTap: () async {
                   if(_formkey.currentState!.validate()){
                     final result = await networkData.postMethod(
-                        'https://task.teamrabbil.com/api/v1/login',
+                        Urls.loginUrl,
                         bodyData: {
                           'email' : emailTextEditingController.text.toString().trim(),
                           'password' : passwordTextEditingController.text.toString().trim(),
