@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:task_manager/data/auth_utils.dart';
 import 'package:task_manager/data/network_utils.dart';
 import 'package:task_manager/data/urls.dart';
 import 'package:task_manager/ui/screens/main_bottom_nav_bar.dart';
@@ -20,10 +23,46 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController emailTextEditingController = TextEditingController();
-  final TextEditingController passwordTextEditingController = TextEditingController();
+  final TextEditingController emailTextEditingController =
+      TextEditingController();
+  final TextEditingController passwordTextEditingController =
+      TextEditingController();
 
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
+  late bool _inProgress = false;
+
+  Future<void> login() async {
+    _inProgress = true;
+    setState(() {});
+    final result = await networkData.postMethod(Urls.loginUrl, bodyData: {
+      'email': emailTextEditingController.text.toString().trim(),
+      'password': passwordTextEditingController.text.toString().trim(),
+    }, onUnauthorized: () {
+      snackBarMessage(context, 'username or password is invaild', true);
+    });
+    _inProgress = true;
+    setState(() {});
+
+    if (result != null && result['status'] == 'success') {
+      AuthUtils.saveUserData(
+          result['data']['firstName'],
+          result['data']['lastName'],
+          result['data']['email'],
+          result['data']['mobile'],
+          result['data']['photo'],
+          result['token']);
+      emailTextEditingController.clear();
+      passwordTextEditingController.clear();
+      snackBarMessage(context, 'Login successfull.');
+      await AuthUtils.getAuthData();
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => MainBottomNavBarScreen()));
+    } else {
+      _inProgress = false;
+      setState(() {});
+      snackBarMessage(context, 'Login Failed.', true);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
       body: ScreenBackgroud(
           widget: Padding(
         padding: const EdgeInsets.all(24.0),
-        child:  Form(
+        child: Form(
           key: _formkey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -47,8 +86,8 @@ class _LoginScreenState extends State<LoginScreen> {
               AppTextFieldWidget(
                 hintText: 'Email',
                 controller: emailTextEditingController,
-                validator: (value){
-                  if(value?.isEmpty ?? true){
+                validator: (value) {
+                  if (value?.isEmpty ?? true) {
                     return 'Enter your email.';
                   }
                   return null;
@@ -60,8 +99,8 @@ class _LoginScreenState extends State<LoginScreen> {
               AppTextFieldWidget(
                 hintText: 'Password',
                 controller: passwordTextEditingController,
-                validator: (value){
-                  if(value?.isEmpty ?? true){
+                validator: (value) {
+                  if (value?.isEmpty ?? true) {
                     return 'Enter your password.';
                   }
                   return null;
@@ -71,34 +110,21 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(
                 height: 16,
               ),
-              AppElevatedButton(
-                child: Icon(Icons.arrow_circle_right_outlined),
-                onTap: () async {
-                  if(_formkey.currentState!.validate()){
-                    final result = await networkData.postMethod(
-                        Urls.loginUrl,
-                        bodyData: {
-                          'email' : emailTextEditingController.text.toString().trim(),
-                          'password' : passwordTextEditingController.text.toString().trim(),
-                        },
-                        onUnauthorized: (){
-                            snackBarMessage(context, 'username or password is invaild',true);
-                        }
-                    );
-                    if(result != null && result['status'] == 'success'){
-                      emailTextEditingController.clear();
-                      passwordTextEditingController.clear();
-                      snackBarMessage(context,'Registration successfull.');
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => MainBottomNavBarScreen()));
-                    }else{
-                      snackBarMessage(context,'Registration Failed.',true);
+              if (_inProgress)
+                const Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.green,
+                  ),
+                )
+              else
+                AppElevatedButton(
+                  child: Icon(Icons.arrow_circle_right_outlined),
+                  onTap: () async {
+                    if (_formkey.currentState!.validate()) {
+                      login();
                     }
-
-                  }
-
-                },
-              ),
+                  },
+                ),
               const SizedBox(
                 height: 16,
               ),
