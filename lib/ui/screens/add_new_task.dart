@@ -23,7 +23,7 @@ class _AddNewTaskScreenState extends State<AddNewTaskScreen> {
       DropdownMenuItem(child: Text("Select Task"), value: ''),
       DropdownMenuItem(child: Text("New"), value: "New"),
       DropdownMenuItem(child: Text("Complete"), value: "Completed"),
-      DropdownMenuItem(child: Text("In Progress"), value: "InProgress"),
+      DropdownMenuItem(child: Text("In Progress"), value: "Inprogress"),
     ];
     return menuItems;
   }

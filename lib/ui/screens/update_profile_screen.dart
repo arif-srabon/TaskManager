@@ -1,4 +1,11 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:task_manager/data/auth_utils.dart';
+import 'package:task_manager/data/network_utils.dart';
+import 'package:task_manager/data/urls.dart';
+import 'package:task_manager/ui/utils/snackbar_message.dart';
 import 'package:task_manager/ui/utils/text_styles.dart';
 import 'package:task_manager/ui/widgets/app_elevated_button.dart';
 import 'package:task_manager/ui/widgets/app_text_field_widget.dart';
@@ -12,6 +19,38 @@ class UpdateProfileScreen extends StatefulWidget {
 }
 
 class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
+  final TextEditingController _emailETController = TextEditingController();
+  final TextEditingController _firstNameETController = TextEditingController();
+  final TextEditingController _lastNameETController = TextEditingController();
+  final TextEditingController _mobileETController = TextEditingController();
+  final TextEditingController _passwordETController = TextEditingController();
+  XFile? pickedImage;
+  initState() {
+    _emailETController.text = AuthUtils.email ?? '';
+    _firstNameETController.text = AuthUtils.firstName ?? '';
+    _lastNameETController.text = AuthUtils.lastName ?? '';
+    _mobileETController.text = AuthUtils.mobile ?? '';
+  }
+
+  void profileUpdate() async{
+    final response = await networkData.postMethod(
+      Urls.profileUpdate,
+      bodyData: {
+        'firstName' : _firstNameETController.text.trim(),
+        'lastName' : _lastNameETController.text.trim(),
+        'mobile' : _mobileETController.text.trim(),
+        'password' : _passwordETController.text.trim(),
+      },
+      token: AuthUtils.token
+    );
+    log(response);
+    if(response != null && response['status'] == 'success'){
+      snackBarMessage(context, "Profile Updated successfull");
+    }else{
+      snackBarMessage(context, "Profile Updated failed",true);
+    }
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,84 +61,84 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
               padding: const EdgeInsets.all(12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [ SizedBox(
-                  height: 24,
-                ),
-
+                children: [
+                  const SizedBox(
+                    height: 24,
+                  ),
                   Text(
                     'Update Your Profile',
                     style: screenTitleTextStyle,
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 8,
                   ),
                   InkWell(
-                    onTap: (){
-
+                    onTap: () async {
+                      pickedImageFrom();
                     },
                     child: Row(
                       children: [
                         Container(
-                          padding: EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: Colors.grey,
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(5),
-                              bottomLeft: Radius.circular(5)
-                            )
-                          ),
-                          child: Text('Photo'),
+                          padding: const EdgeInsets.all(16),
+                          decoration: const BoxDecoration(
+                              color: Colors.grey,
+                              borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(5),
+                                  bottomLeft: Radius.circular(5))),
+                          child: const Text('Photo'),
                         ),
                         Expanded(
                           child: Container(
-                            padding: EdgeInsets.all(16),
-                            decoration: BoxDecoration(
+                            padding: const EdgeInsets.all(16),
+                            decoration: const BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.only(
                                     topRight: Radius.circular(5),
-                                    bottomRight: Radius.circular(5)
-                                )
-                            ),
-                            child: Text(''),
+                                    bottomRight: Radius.circular(5))),
+                            child: Text(pickedImage?.name ?? ''),
                           ),
                         )
                       ],
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 6,
                   ),
                   AppTextFieldWidget(
-                      hintText: 'Email', controller: TextEditingController()),
-                  SizedBox(
+                      hintText: 'Email',
+                      readOnly: true,
+                      controller: _emailETController),
+                  const SizedBox(
                     height: 6,
                   ),
                   AppTextFieldWidget(
                       hintText: 'First Name',
-                      controller: TextEditingController()),
-                  SizedBox(
+                      controller: _firstNameETController),
+                  const SizedBox(
                     height: 6,
                   ),
                   AppTextFieldWidget(
-                      hintText: 'Last Name', controller: TextEditingController()),
-                  SizedBox(
+                      hintText: 'Last Name', controller: _lastNameETController),
+                  const SizedBox(
                     height: 6,
                   ),
                   AppTextFieldWidget(
-                      hintText: 'Mobile', controller: TextEditingController()),
-                  SizedBox(
+                      hintText: 'Mobile', controller: _mobileETController),
+                  const SizedBox(
                     height: 6,
                   ),
                   AppTextFieldWidget(
                       hintText: 'Password',
                       obscureText: true,
-                      controller: TextEditingController()),
-                  SizedBox(
+                      controller: _passwordETController),
+                  const SizedBox(
                     height: 6,
                   ),
                   AppElevatedButton(
-                      child: Icon(Icons.arrow_circle_right_outlined),
-                      onTap: () {})
+                      child: const Icon(Icons.arrow_circle_right_outlined),
+                      onTap: () {
+                        profileUpdate();
+                      })
                 ],
               ),
             ),
@@ -107,5 +146,42 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
         ),
       ),
     );
+  }
+
+  void pickedImageFrom(){
+    showDialog(context: context, builder: (context){
+      return AlertDialog(
+        title: const Text('Picked Image Form'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: const Text('From Camera'),
+              leading: const Icon(Icons.camera),
+              onTap: () async {
+                pickedImage = await ImagePicker()
+                    .pickImage(source: ImageSource.camera);
+                if(pickedImage != null){
+                  Navigator.pop(context);
+                  setState(() {});
+                }
+              },
+            ),
+            ListTile(
+              title: const Text('From Gallery'),
+              leading: const Icon(Icons.browse_gallery),
+              onTap: () async {
+                pickedImage = await ImagePicker()
+                    .pickImage(source: ImageSource.gallery);
+                if(pickedImage != null){
+                  Navigator.pop(context);
+                  setState(() {});
+                }
+              },
+            )
+          ],
+        ),
+      );
+    });
   }
 }
