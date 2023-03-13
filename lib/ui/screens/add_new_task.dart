@@ -49,7 +49,6 @@ class _AddNewTaskScreenState extends State<AddNewTaskScreen> {
               'description': descriptionEditingController.text.toString().trim(),
               'status': selectedValue,
             },
-            token: AuthUtils.token,
             onUnauthorized: () {
             snackBarMessage(
               context, 'invaild login user please try again with login', true);

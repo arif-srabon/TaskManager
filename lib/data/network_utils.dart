@@ -39,12 +39,13 @@ class networkData {
    */
   static Future<dynamic> postMethod(String url,
       {Map<String, String>? bodyData,
-      VoidCallback? onUnauthorized,
-      String? token}) async {
+      VoidCallback? onUnauthorized
+      }) async {
     try {
       http.Response response = await http.post(Uri.parse(url),
-          headers: {"Content-Type": "application/json", "token": token ?? ''},
+          headers: {"Content-Type": "application/json", "token": AuthUtils.token ?? ''},
           body: jsonEncode(bodyData));
+
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
       } else if (response.statusCode == 401) {

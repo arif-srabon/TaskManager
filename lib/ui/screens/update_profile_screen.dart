@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -25,6 +26,8 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
   final TextEditingController _mobileETController = TextEditingController();
   final TextEditingController _passwordETController = TextEditingController();
   XFile? pickedImage;
+  String? base64Image;
+
   initState() {
     _emailETController.text = AuthUtils.email ?? '';
     _firstNameETController.text = AuthUtils.firstName ?? '';
@@ -33,18 +36,26 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
   }
 
   void profileUpdate() async{
-    final response = await networkData.postMethod(
+    if(pickedImage != null){
+      List<int> byteImage = await pickedImage!.readAsBytes();
+      base64Image = base64Encode(byteImage);
+    }
+    final result = await networkData.postMethod(
       Urls.profileUpdate,
       bodyData: {
         'firstName' : _firstNameETController.text.trim(),
         'lastName' : _lastNameETController.text.trim(),
         'mobile' : _mobileETController.text.trim(),
         'password' : _passwordETController.text.trim(),
+        'photo' : base64Image ?? '',
       },
-      token: AuthUtils.token
     );
-    log(response);
-    if(response != null && response['status'] == 'success'){
+    if(result != null && result['status'] == 'success'){
+      AuthUtils.firstName =  _firstNameETController.text.trim();
+      AuthUtils.lastName =  _lastNameETController.text.trim();
+      AuthUtils.mobile =  _mobileETController.text.trim();
+      AuthUtils.photo =  base64Image;
+
       snackBarMessage(context, "Profile Updated successfull");
     }else{
       snackBarMessage(context, "Profile Updated failed",true);
