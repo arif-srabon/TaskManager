@@ -20,6 +20,7 @@ class UpdateProfileScreen extends StatefulWidget {
 }
 
 class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
+  bool _inprogress = false;
   final TextEditingController _emailETController = TextEditingController();
   final TextEditingController _firstNameETController = TextEditingController();
   final TextEditingController _lastNameETController = TextEditingController();
@@ -35,33 +36,43 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
     _mobileETController.text = AuthUtils.mobile ?? '';
   }
 
-  void profileUpdate() async{
-    if(pickedImage != null){
+  void profileUpdate() async {
+    _inprogress = true;
+    setState(() {});
+
+    if (pickedImage != null) {
       List<int> byteImage = await pickedImage!.readAsBytes();
       base64Image = base64Encode(byteImage);
     }
+
+    Map<String, String> bodyParams = {
+      'firstName': _firstNameETController.text.trim(),
+      'lastName': _lastNameETController.text.trim(),
+      'mobile': _mobileETController.text.trim(),
+      'photo': base64Image ?? '',
+    };
+    if (_passwordETController.text.trim().isNotEmpty) {
+      bodyParams['password'] = _passwordETController.text.trim();
+    }
+
     final result = await networkData.postMethod(
       Urls.profileUpdate,
-      bodyData: {
-        'firstName' : _firstNameETController.text.trim(),
-        'lastName' : _lastNameETController.text.trim(),
-        'mobile' : _mobileETController.text.trim(),
-        'password' : _passwordETController.text.trim(),
-        'photo' : base64Image ?? '',
-      },
+      bodyData: bodyParams,
     );
-    if(result != null && result['status'] == 'success'){
-      AuthUtils.firstName =  _firstNameETController.text.trim();
-      AuthUtils.lastName =  _lastNameETController.text.trim();
-      AuthUtils.mobile =  _mobileETController.text.trim();
-      AuthUtils.photo =  base64Image;
+    if (result != null && result['status'] == 'success') {
+      AuthUtils.firstName = _firstNameETController.text.trim();
+      AuthUtils.lastName = _lastNameETController.text.trim();
+      AuthUtils.mobile = _mobileETController.text.trim();
+      AuthUtils.photo = base64Image;
 
       snackBarMessage(context, "Profile Updated successfull");
-    }else{
-      snackBarMessage(context, "Profile Updated failed",true);
+    } else {
+      snackBarMessage(context, "Profile Updated failed", true);
     }
+    _inprogress = false;
+    setState(() {});
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -145,11 +156,17 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                   const SizedBox(
                     height: 6,
                   ),
-                  AppElevatedButton(
-                      child: const Icon(Icons.arrow_circle_right_outlined),
-                      onTap: () {
-                        profileUpdate();
-                      })
+                  (_inprogress)
+                      ? Center(
+                          child: CircularProgressIndicator(
+                            color: Colors.green,
+                          ),
+                        )
+                      : AppElevatedButton(
+                          child: const Icon(Icons.arrow_circle_right_outlined),
+                          onTap: () {
+                            profileUpdate();
+                          })
                 ],
               ),
             ),
@@ -159,40 +176,42 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
     );
   }
 
-  void pickedImageFrom(){
-    showDialog(context: context, builder: (context){
-      return AlertDialog(
-        title: const Text('Picked Image Form'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              title: const Text('From Camera'),
-              leading: const Icon(Icons.camera),
-              onTap: () async {
-                pickedImage = await ImagePicker()
-                    .pickImage(source: ImageSource.camera);
-                if(pickedImage != null){
-                  Navigator.pop(context);
-                  setState(() {});
-                }
-              },
+  void pickedImageFrom() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Picked Image Form'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  title: const Text('From Camera'),
+                  leading: const Icon(Icons.camera),
+                  onTap: () async {
+                    pickedImage = await ImagePicker()
+                        .pickImage(source: ImageSource.camera);
+                    if (pickedImage != null) {
+                      Navigator.pop(context);
+                      setState(() {});
+                    }
+                  },
+                ),
+                ListTile(
+                  title: const Text('From Gallery'),
+                  leading: const Icon(Icons.browse_gallery),
+                  onTap: () async {
+                    pickedImage = await ImagePicker()
+                        .pickImage(source: ImageSource.gallery);
+                    if (pickedImage != null) {
+                      Navigator.pop(context);
+                      setState(() {});
+                    }
+                  },
+                )
+              ],
             ),
-            ListTile(
-              title: const Text('From Gallery'),
-              leading: const Icon(Icons.browse_gallery),
-              onTap: () async {
-                pickedImage = await ImagePicker()
-                    .pickImage(source: ImageSource.gallery);
-                if(pickedImage != null){
-                  Navigator.pop(context);
-                  setState(() {});
-                }
-              },
-            )
-          ],
-        ),
-      );
-    });
+          );
+        });
   }
 }
