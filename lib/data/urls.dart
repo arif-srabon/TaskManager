@@ -11,4 +11,5 @@ class Urls {
   static String profileUpdate = '$baseUrl/profileUpdate';
   static String updateTaskStatus(String taskId, String status) => '$baseUrl/updateTaskStatus/$taskId/$status';
   static String deleteTask(String taskId) => '$baseUrl/deleteTask/$taskId';
+  static String RecoverVerifyEmail(String emailAddress) => '$baseUrl/RecoverVerifyEmail/$emailAddress';
 }

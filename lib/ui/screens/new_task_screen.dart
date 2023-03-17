@@ -3,6 +3,7 @@ import 'package:task_manager/data/models/new_tasks.dart';
 import 'package:task_manager/data/models/task_status_count.dart';
 import 'package:task_manager/data/network_utils.dart';
 import 'package:task_manager/data/urls.dart';
+import 'package:task_manager/ui/utils/alertDialog_widget.dart';
 import 'package:task_manager/ui/utils/snackbar_message.dart';
 import 'package:task_manager/ui/widgets/dashboard_item_widget.dart';
 import 'package:task_manager/ui/widgets/screen_background_widget.dart';
@@ -117,7 +118,8 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
                        });
                       },
                       onDeletePress: () {
-                        deleteTask(tasksList.data?[index].sId ?? '');
+                        _confirmDelete(tasksList.data?[index].sId ?? '');
+                        // deleteTask(tasksList.data?[index].sId ?? '');
                       },
                     );
                   }),
@@ -126,6 +128,22 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
     ));
   }
 
+
+  _confirmDelete(String taskId) {
+    var baseDialog = BaseAlertDialog(
+        title: "Confirm Delete",
+        content: "Are you sure that you want to delte this record?",
+        yesOnPressed: (){
+          deleteTask(taskId);
+          Navigator.of(context, rootNavigator: true).pop();
+        },
+        noOnPressed: () {
+          Navigator.of(context, rootNavigator: true).pop();
+        },
+        yes: "Yes confirm",
+        no: "Cancel");
+    showDialog(context: context, builder: (BuildContext context) => baseDialog);
+  }
 
   deleteTask(String taskId) async{
     final response = await networkData.getMethod(Urls.deleteTask(taskId));

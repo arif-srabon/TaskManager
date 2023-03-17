@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:task_manager/data/network_utils.dart';
+import 'package:task_manager/data/urls.dart';
 import 'package:task_manager/ui/screens/otp_verification_screen.dart';
+import 'package:task_manager/ui/utils/snackbar_message.dart';
 import 'package:task_manager/ui/utils/text_styles.dart';
 import 'package:task_manager/ui/widgets/app_elevated_button.dart';
 import 'package:task_manager/ui/widgets/app_text_button_widget.dart';
@@ -14,6 +17,16 @@ class VerifyWithEmailScreen extends StatefulWidget {
 }
 
 class _VerifyWithEmailScreenState extends State<VerifyWithEmailScreen> {
+
+  void recoverVerifyEmail(String emailAddress) async{
+    final response = await networkData.getMethod(Urls.RecoverVerifyEmail(emailAddress));
+    if(response != null){
+      print(response);
+    }else{
+      snackBarMessage(context, 'Task Deleted Failed! Please Try again',true);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
